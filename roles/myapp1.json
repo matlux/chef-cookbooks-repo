@@ -1,0 +1,14 @@
+{
+  "name": "myapp1",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "run_list": [
+    "recipe[myapp]"
+  ],
+  "override_attributes": {
+    "myapp": {
+      "instanceReq": 2
+    }
+  }
+ 
+}

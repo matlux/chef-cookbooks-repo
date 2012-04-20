@@ -1,0 +1,12 @@
+{
+  "name": "uat",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "run_list": [
+    "role[global]"
+  ],
+  "override_attributes": {
+  	"env" : "UAT"
+  }
+ 
+}

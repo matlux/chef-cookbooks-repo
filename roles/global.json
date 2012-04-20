@@ -1,0 +1,12 @@
+{
+  "name": "global-conf",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "override_attributes": {
+    "global": {
+  		"deploydir" : "/home/vr/deploy",
+  		"resourcedir" : "/tmp/chefwork/var/local/pocketknife/cookbooks/helloworld/files/default"
+  	}
+  }
+ 
+}

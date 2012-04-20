@@ -1,0 +1,9 @@
+{
+  "run_list": [
+    "role[uat]",
+    "role[helloworld]"
+  ],
+  "helloworld": {
+      "a-variable-to-overwrite": "value"
+    }
+}

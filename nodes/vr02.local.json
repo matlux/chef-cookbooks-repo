@@ -1,0 +1,9 @@
+{
+  "run_list": [
+    "role[uat]",
+    "role[myapp1]"
+  ],
+  "tomcat": {
+      "instanceNumber": 3
+    }
+}

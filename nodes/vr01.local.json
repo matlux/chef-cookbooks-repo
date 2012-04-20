@@ -1,0 +1,9 @@
+{
+  "run_list": [
+    "role[uat]",
+    "recipe[helloworld]"
+  ],
+  "helloworld": {
+      "instanceNumber": 3
+    }
+}
