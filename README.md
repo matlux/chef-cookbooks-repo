@@ -70,6 +70,20 @@ If something goes wrong while deploying the configuration, you can display verbo
 
     /path/of/your/choice/pocketknife_alt/bin/pocketknife -v henrietta
 
+Setup a user
+------------
+
+Optional arguments:
+
+    --user myuser
+
+    --password passwordFile
+
+
+password file format:
+
+    myuser: mypassword
+
 
     
 
