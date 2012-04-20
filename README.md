@@ -1,7 +1,7 @@
 pocketknife and Chef for Apps Repo Tutorial
 ===========================================
 
-`This is a Chef Cookbook repo that containts very simple examples of an application deployment with [pocketknife](https://github.com/matlux/pocketknife) and Chef-solo, powered by [Opscode Chef](http://www.opscode.com/chef/).
+ This is a Chef Cookbook repo that containts very simple examples of an application deployment with [pocketknife](https://github.com/matlux/pocketknife) and Chef-solo, powered by [Opscode Chef](http://www.opscode.com/chef/).
 
 This repo can also be used with Chef-solo on its own.
 
@@ -22,6 +22,8 @@ Install Pocketknife ('matlux' version)
 * Install `pocketknife`: `gem install pocketknife` - this will install the original pocketknife from Igal (and more importantly) all its dependencies.
 * cd /path/of/your/choice/
 * Clone my repo: git clone git://github.com/matlux/pocketknife.git
+* cd ..
+* mv pocketknife pocketknife_alt
 
 make sure in the rest of this tutorial you call pocketknife from the github clone rather than the pocketknife installed on gem. That's why you need to call the pocketknife with a canonical path to the git repo:
 
