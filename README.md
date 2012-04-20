@@ -73,6 +73,8 @@ If something goes wrong while deploying the configuration, you can display verbo
 Setup a user
 ------------
 
+This version of pocketknife does not require to run chef-solo as root. You can run it as any user you like as long as its able to carry out what needs to be done in the recipe. This is ideal in a deployment scenario when the application developers often don't have root acces on the boxes they need to deploy onto.
+
 Optional arguments:
 
     --user myuser
