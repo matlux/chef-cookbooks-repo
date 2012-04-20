@@ -53,7 +53,7 @@ All you need to do is to define a new node using the `chef` JSON syntax for [run
         }
     }
 
-    Call the file `henrietta.swa.gov.it` or your version of a [hostname.domain]. You can use `nodes/vr01.local.json` as an example.
+Call the file `henrietta.swa.gov.it` or your version of a [hostname.domain]. You can use `nodes/vr01.local.json` as an example.
     
 
 Operations on remote nodes will be performed using SSH. You should consider [configuring ssh-agent](http://mah.everybody.org/docs/ssh) so you don't have to keep typing in your passwords.
