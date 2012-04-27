@@ -19,24 +19,20 @@ Install the software on the machine you'll be running `pocketknife` on, this is 
 Install Pocketknife ('matlux' version)
 --------------------------------------
 
-* Install `pocketknife`: `gem install pocketknife` - this will install the original pocketknife from Igal (and more importantly) all its dependencies.
-* cd /path/of/your/choice/
-* Clone my repo: git clone git://github.com/matlux/pocketknife.git
-* cd ..
-* mv pocketknife pocketknife_alt
-
-make sure in the rest of this tutorial you call pocketknife from the github clone rather than the pocketknife installed on gem. That's why you need to call the pocketknife with a canonical path to the git repo:
-
-    /path/of/your/choice/pocketknife_alt/bin/pocketknife
+* Install Ruby: http://www.ruby-lang.org/
+* Install Rubygems: http://rubygems.org/
+* Install `archive-tar-minitar`: `gem install archive-tar-minitar` - pocketknife dependency.
+* Install `rye`: `gem install rye` - pocketknife dependency.
+* `cd /path/of/your/choice`
+* `git clone git://github.com/matlux/pocketknife.git`
+* `export PATH=/path/of/your/choice/pocketknife:$PATH` - add pocketknife to your PATH
 
 Clone 'matlux' Cookbooks Repository
 -----------------------------------
 
 * `cd /path/of/your/choice`
 * `git clone git://github.com/matlux/pocketknife.git`
-* `cd ..`
-* `mv pocketknife pocketknife_alt`
-* `cd /path/of/your/choice/pocketknifeRepo`
+* `cd pocketknifeRepo`
 
 1st Cookbook: the classic "Helloworld"
 ------------------------------------
@@ -53,14 +49,14 @@ All you need to do is to define a new node using the `chef` JSON syntax for [run
         }
     }
 
-Call the file `henrietta.swa.gov.it` or your version of a [hostname.domain]. You can use `nodes/vr01.local.json` as an example.
+Call the file `henrietta.swa.gov.it` inside the `nodes` directory` or your version of a [hostname.domain].
     
 
 Operations on remote nodes will be performed using SSH. You should consider [configuring ssh-agent](http://mah.everybody.org/docs/ssh) so you don't have to keep typing in your passwords.
 
 Finally, deploy your configuration to the remote machine and see the results. For example, lets deploy the above configuration to the `henrietta.swa.gov.it` host, which can be abbreviated as `henrietta` when calling `pocketknife`:
 
-    /path/of/your/choice/pocketknife_alt/bin/pocketknife henrietta
+    pocketknife henrietta
 
 When deploying a configuration to a node, `pocketknife` will check whether Chef and its dependencies are installed. It something is missing, it will prompt you for whether you'd like to have it install them automatically.
 
@@ -68,7 +64,17 @@ To always install Chef and its dependencies when they're needed, without prompts
 
 If something goes wrong while deploying the configuration, you can display verbose logging from `pocketknife` and Chef by using the `-v` option. For example, deploy the configuration to `henrietta` with verbose logging:
 
-    /path/of/your/choice/pocketknife_alt/bin/pocketknife -v henrietta
+    pocketknife -v henrietta
+
+Once the program has executed you can verify that it has executed correctly by log into the remote computer and run the application as follow:
+
+    ssh henrietta.swa.gov.it
+    cd ~/chefwork/helloworld/bin
+    ./start.sh
+
+    > Helloworld
+
+There you are you're application is deployed and behaving correctly.
 
 Setup a user
 ------------
@@ -86,15 +92,16 @@ password file format:
 
     myuser: mypassword
 
-
-    
-
 2nd Cookbook: an elastic 'myapp1' application
 ------------------------------------------
 
 This application is elastic, it request 2 instances ("instanceReq") per node and assumes 3 slots are available ("instanceNumber").
 
-You will see a myapp1 role is already defined inside the `roles` directory that describe common behavior and attributes of the "myapp" component using JSON syntax using [chef's documentation](http://wiki.opscode.com/display/chef/Roles#Roles-AsJSON). For example, define a role called `ntp_client` by creating a file called `roles/ntp_client.json` with this content:
+You will see a myapp1 role is already defined inside the `roles` directory that describe common behavior and attributes of the "myapp" component using JSON syntax using [chef's documentation](http://wiki.opscode.com/display/chef/Roles#Roles-AsJSON).
+
+Override cookbooks in the `site-cookbooks` directory. This has the same structure as `cookbooks`, but any files you put here will override the contents of `cookbooks`. This is useful for storing the original code of a third-party cookbook in `cookbooks` and putting your customizations in `site-cookbooks`.
+
+Define roles in the `roles` directory that describe common behavior and attributes of your computers using JSON syntax using [chef's documentation](http://wiki.opscode.com/display/chef/Roles#Roles-AsJSON). For example, define a role called `myapp1` by creating a file called `roles/myapp1.json` with this content:
 
     {
       "name": "myapp1",
@@ -122,9 +129,34 @@ All you need to do is to define a new node using the `chef` JSON syntax for [run
         }
     }
 
-    Call the file `henrietta.swa.gov.it` or your version of a [hostname.domain]. You can use `nodes/vr01.local.json` as an example.
+    Call the file `henrietta.swa.gov.it` or your version of a [hostname.domain]. You will find an example in this project called `nodes/vr01.local.json` as an example.
     
- Follow the same procedure as in the 'helloworld' example to test it.
+What is interesting to understand is that `myapp1` is a top level component that you are interested to install on a machine. `myapp1` happens to use a commonly used sub-component called `myapp` which is a recipe. `myapp` has two sort of `attributes` (i.e. variables): those that are always true (closely bound to the `myapp` recipe) and those that are environmnet specific. Let's have a look at the chef-cookbooks-repo/cookbooks/myapp/attributes/default.rb file.
+
+
+This is specific to UAT:
+
+    default["UAT"]["myapp"]["base_port"] = 8080
+    default["UAT"]["myapp"]["base_ssl_port"] = 8443
+
+This is specific to DEV:
+
+    default["DEV"]["myapp"]["base_port"] = 8079
+    default["DEV"]["myapp"]["base_ssl_port"] = 8443
+
+This is generic to any environment:
+
+    default["myapp"]["message"] = "hello world"
+    default["myapp"]["java_options"] = "-Xmx128M -Djava.awt.headless=true"
+    default["myapp"]["role_sub_dir"] = "myapp"
+    default["myapp"]["user"] = "vr"
+    default["myapp"]["group"] = "vr"
+
+If a node uses the role `uat` it means the `myapp` recipe will use the `UAT` variables so environment and recipe are orthogonal to one another. It is very good to recipe re-use across environments. The benefit of this pattern is that one tested on a couple of environments it is easy to add an additional environment. Only the set of environment specific variable needs to be filled in to enable a new environment.
+
+Finally, deploy your configuration to the remote machine and see the results. For example, lets deploy the above configuration to the `henrietta2.swa.gov.it` host, which can be abbreviated as `henrietta` when calling `pocketknife`:
+
+    pocketknife vr02
 
 If you really need to debug on the remote machine, you may be interested about some of the commands and paths:
 
