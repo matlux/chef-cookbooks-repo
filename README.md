@@ -5,7 +5,7 @@ pocketknife and Chef for Apps Repo Tutorial
 
 This repo can also be used with Chef-solo on its own.
 
-This tutorial expects you to install the 'matlux' version of the Pocketknife tool to work. Appart from some aspects, most of the following can easily be used with the original version of the Pocketknife.
+This tutorial expects you to install the 'matlux' version of the Pocketknife tool to work. Appart from some aspects, most of the following can easily be used with the original version of the [Igal's Pocketknife](https://github.com/igal/pocketknife).
 
 Pre-requisites
 --------------
