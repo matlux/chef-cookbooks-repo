@@ -1,11 +1,11 @@
 pocketknife and Chef for Apps Repo Tutorial
 ===========================================
 
- This is a Chef Cookbook repo that containts very simple examples of an application deployment with [pocketknife](https://github.com/matlux/pocketknife) and Chef-solo, powered by [Opscode Chef](http://www.opscode.com/chef/).
+ This is a Chef Cookbook repo that containts very simple examples of an application deployment that can be used with [Matlux' pocketknife](https://github.com/matlux/pocketknife) and Chef-solo, powered by [Opscode Chef](http://www.opscode.com/chef/).
 
 This repo can also be used with Chef-solo on its own.
 
-This tutorial expects you to install the 'matlux' version of the Pocketknife tool to work. Appart from some aspects, most of the following can easily be used with the original version of the [Igal's Pocketknife](https://github.com/igal/pocketknife).
+This tutorial expects you to install the 'matlux' version of the Pocketknife tool to work. Appart from some aspects, most of the following can easily be adapted and used with the original version of the [Igal's Pocketknife](https://github.com/igal/pocketknife). However this tutorial will not work if chef-solo is ran as the root user.
 
 Pre-requisites
 --------------
@@ -19,20 +19,11 @@ Install the software on the machine you'll be running `pocketknife` on, this is 
 Install Pocketknife ('matlux' version)
 --------------------------------------
 
-* Install Ruby: http://www.ruby-lang.org/
-* Install Rubygems: http://rubygems.org/
 * Install `archive-tar-minitar`: `gem install archive-tar-minitar` - pocketknife dependency.
 * Install `rye`: `gem install rye` - pocketknife dependency.
 * `cd /path/of/your/choice`
 * `git clone git://github.com/matlux/pocketknife.git`
 * `export PATH=/path/of/your/choice/pocketknife:$PATH` - add pocketknife to your PATH
-
-Clone 'matlux' Cookbooks Repository
------------------------------------
-
-* `cd /path/of/your/choice`
-* `git clone git://github.com/matlux/pocketknife.git`
-* `cd pocketknifeRepo`
 
 1st Cookbook: the classic "Helloworld"
 ------------------------------------
@@ -56,7 +47,7 @@ Operations on remote nodes will be performed using SSH. You should consider [con
 
 Finally, deploy your configuration to the remote machine and see the results. For example, lets deploy the above configuration to the `henrietta.swa.gov.it` host, which can be abbreviated as `henrietta` when calling `pocketknife`:
 
-    pocketknife henrietta
+    pocketknife --user bob henrietta
 
 When deploying a configuration to a node, `pocketknife` will check whether Chef and its dependencies are installed. It something is missing, it will prompt you for whether you'd like to have it install them automatically.
 
@@ -64,7 +55,7 @@ To always install Chef and its dependencies when they're needed, without prompts
 
 If something goes wrong while deploying the configuration, you can display verbose logging from `pocketknife` and Chef by using the `-v` option. For example, deploy the configuration to `henrietta` with verbose logging:
 
-    pocketknife -v henrietta
+    pocketknife --user bob -v henrietta
 
 Once the program has executed you can verify that it has executed correctly by log into the remote computer and run the application as follow:
 
@@ -72,6 +63,7 @@ Once the program has executed you can verify that it has executed correctly by l
     cd ~/chefwork/helloworld/bin
     ./start.sh
 
+    > Message is:
     > Helloworld
 
 There you are you're application is deployed and behaving correctly.
@@ -87,10 +79,16 @@ Optional arguments:
 
     --password passwordFile
 
+Example:
 
-password file format:
+    pocketknife --user bob --password passwordExample.txt henrietta
 
-    myuser: mypassword
+The password file should contain a list of user and passwords as follow:
+
+    bob: bobpassword
+    user2: password2
+    user3: password3
+
 
 2nd Cookbook: an elastic 'myapp1' application
 ------------------------------------------
@@ -149,14 +147,22 @@ This is generic to any environment:
     default["myapp"]["message"] = "hello world"
     default["myapp"]["java_options"] = "-Xmx128M -Djava.awt.headless=true"
     default["myapp"]["role_sub_dir"] = "myapp"
-    default["myapp"]["user"] = "vr"
-    default["myapp"]["group"] = "vr"
 
-If a node uses the role `uat` it means the `myapp` recipe will use the `UAT` variables so environment and recipe are orthogonal to one another. It is very good to recipe re-use across environments. The benefit of this pattern is that one tested on a couple of environments it is easy to add an additional environment. Only the set of environment specific variable needs to be filled in to enable a new environment.
+If a node uses the role `uat` it means that `myapp` recipe will use the `UAT` variables so environment and recipe are orthogonal to one another. It is useful to be able to re-use recipes across various environments without to have to rewrite the recipe. The benefit of this pattern is that once tested on a couple of environments it is easy to add an additional environment. Only the set of environment specific variable needs to be filled in to enable a new environment.
 
 Finally, deploy your configuration to the remote machine and see the results. For example, lets deploy the above configuration to the `henrietta2.swa.gov.it` host, which can be abbreviated as `henrietta` when calling `pocketknife`:
 
-    pocketknife vr02
+    pocketknife --user bob henrietta
+
+Once the program has executed you can verify that it has executed correctly by log into the remote computer and run the application as follow:
+
+    ssh henrietta.swa.gov.it
+    ~/deploy/myapp/instance1/bin/start.sh
+
+    > Message is:
+    > Hi Helloworld
+
+There you are you're application is deployed and behaving correctly.
 
 If you really need to debug on the remote machine, you may be interested about some of the commands and paths:
 

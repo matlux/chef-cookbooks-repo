@@ -34,8 +34,8 @@ numberOfInstanceReq = node[:myapp][:instanceReq]
 	port = node[node[:env]]["myapp"]["base_port"] + i -1
 	ssl_port = node[node[:env]]["myapp"]["base_ssl_port"] + i -1
 
-	install_path = "#{node[:global][:deploydir]}/#{node[:myapp][:role_sub_dir]}/instance#{i}"
-	resource_path = "#{node[:global][:resourcedir]}"
+	install_path = "#{ENV['HOME']}/#{node[:global][:deploydir]}/#{node[:myapp][:role_sub_dir]}/instance#{i}"
+	resource_path = "#{ENV['HOME']}/#{node[:global][:resourcedir]}"
 	myappName = "myapp"
 	myapp_tar = "#{resource_path}/#{myappName}.tar.gz"
 	
@@ -47,7 +47,7 @@ numberOfInstanceReq = node[:myapp][:instanceReq]
 	      recursive true
 	end
 	
-	directory "#{install_path}/mydir" do
+	directory "#{install_path}/conf" do
 	      mode "0775"
 	      action :create
 	      recursive true
@@ -62,14 +62,13 @@ numberOfInstanceReq = node[:myapp][:instanceReq]
 	  	exit 1
 	  fi
 	  tar xvfz #{myapp_tar}
-	  mv #{myappName}/* .
-	  rm -r #{myappName}
-	  chown -R #{node["myapp"]["user"]}:#{node["myapp"]["group"]} #{install_path}
+	  #mv #{myappName}/* .
+	  #rm -r #{myappName}
 	  EOH
 	end
 	
 	
-	template "#{install_path}/mydir/setenv.sh" do
+	template "#{install_path}/conf/setenv.sh" do
 	  source "setenv.sh.erb"
 	  variables(
     	:port => port,
