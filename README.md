@@ -1,11 +1,11 @@
-pocketknife and Chef for Apps Repo Tutorial
-===========================================
+Chef Cookbook Repository with a pocketknife Tutorial targeting Application Deployment
+=====================================================================================
 
  This is a Chef Cookbook repo that containts very simple examples of an application deployment that can be used with [Matlux' pocketknife](https://github.com/matlux/pocketknife) and Chef-solo, powered by [Opscode Chef](http://www.opscode.com/chef/).
 
 This repo can also be used with Chef-solo on its own.
 
-This tutorial expects you to install the 'matlux' version of the Pocketknife tool to work. Appart from some aspects, most of the following can easily be adapted and used with the original version of the [Igal's Pocketknife](https://github.com/igal/pocketknife). However this tutorial will not work if chef-solo is ran as the root user.
+This tutorial expects you to install the 'matlux' version of the Pocketknife tool to work. Appart from some aspects, most of the following can easily be adapted and used with the original version of the [Igal's Pocketknife](https://github.com/igal/pocketknife). However this tutorial will NOT WORK if chef-solo is ran as the root user. You have to use the `--user` option with a user different from `root`. This is a limitation that I'm looking to overcome in future versions of this cookbook repository.
 
 Pre-requisites
 --------------
@@ -24,6 +24,8 @@ Install Pocketknife ('matlux' version)
 * `cd /path/of/your/choice`
 * `git clone git://github.com/matlux/pocketknife.git`
 * `export PATH=/path/of/your/choice/pocketknife:$PATH` - add pocketknife to your PATH
+
+
 
 1st Cookbook: the classic "Helloworld"
 ------------------------------------
@@ -67,27 +69,6 @@ Once the program has executed you can verify that it has executed correctly by l
     > Helloworld
 
 There you are you're application is deployed and behaving correctly.
-
-Setup a user
-------------
-
-This version of pocketknife does not require to run chef-solo as root. You can run it as any user you like as long as its able to carry out what needs to be done in the recipe. This is ideal in a deployment scenario when the application developers often don't have root acces on the boxes they need to deploy onto.
-
-Optional arguments:
-
-    --user myuser
-
-    --password passwordFile
-
-Example:
-
-    pocketknife --user bob --password passwordExample.txt henrietta
-
-The password file should contain a list of user and passwords as follow:
-
-    bob: bobpassword
-    user2: password2
-    user3: password3
 
 
 2nd Cookbook: an elastic 'myapp1' application
@@ -150,7 +131,7 @@ This is generic to any environment:
 
 If a node uses the role `uat` it means that `myapp` recipe will use the `UAT` variables so environment and recipe are orthogonal to one another. It is useful to be able to re-use recipes across various environments without to have to rewrite the recipe. The benefit of this pattern is that once tested on a couple of environments it is easy to add an additional environment. Only the set of environment specific variable needs to be filled in to enable a new environment.
 
-Finally, deploy your configuration to the remote machine and see the results. For example, lets deploy the above configuration to the `henrietta2.swa.gov.it` host, which can be abbreviated as `henrietta` when calling `pocketknife`:
+Finally, deploy your configuration to the remote machine and see the results. For example, lets deploy the above configuration to the `henrietta.swa.gov.it` host, which can be abbreviated as `henrietta` when calling `pocketknife`:
 
     pocketknife --user bob henrietta
 
@@ -168,9 +149,30 @@ If you really need to debug on the remote machine, you may be interested about s
 
 * `chef-solo-apply` (/tmp/usr/local/sbin/chef-solo-apply) will apply the configuration to the machine. You can specify `-l debug` to make it more verbose. Run it with `-h` for help.
 * `csa` (/tmp/usr/local/sbin/csa) is a shortcut for `chef-solo-apply` and accepts the same arguments.
-* `/tmp/etc/chef/solo.rb` contains the `chef-solo` configuration settings.
-* `/tmp/etc/chef/node.json` contains the node-specific configuration, like the `runlist` and attributes.
-* `/tmp/var/local/pocketknife` contains the `cookbooks`, `site-cookbooks` and `roles` describing your configuration.
+* `~/chefwork/etc/chef/solo.rb` contains the `chef-solo` configuration settings.
+* `~/chefwork/etc/chef/node.json` contains the node-specific configuration, like the `runlist` and attributes.
+* `~/chefwork/var/local/pocketknife` contains the `cookbooks`, `site-cookbooks` and `roles` describing your configuration.
+
+Use pocketknife with a non root user
+------------------------------------
+
+The `matlux` version of pocketknife does not require to run chef-solo as root. This tutorial assumes that you are running it as a non root user. You can run it as any user you like as long as its able to carry out what needs to be done in the recipe. This is ideal in a deployment scenario when the application developers often don't have root acces on the boxes they need to deploy onto.
+
+Optional arguments:
+
+    --user myuser
+
+    --password passwordFile
+
+Example:
+
+    pocketknife --user bob --password passwordExample.txt henrietta
+
+The password file should contain a list of user and passwords as follow:
+
+    bob: bobpassword
+    user2: password2
+    user3: password3
 
 Contributing
 ------------
